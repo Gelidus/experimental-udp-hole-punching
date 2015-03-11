@@ -53,7 +53,7 @@ socket.on "message", (data, publicInfo) ->
     return console.log("Cannot parse given data #{e}: #{data}")
 
   if data.status isnt 200
-    if data.request is "register" # not successful register, we want to connect to existing node
+    if data.request is "register" and data.status is 409 # not successful register, we want to connect to existing node
       getNetworkIP (err, ip) ->
         return send connectionInfo, {
           request: "connect"
