@@ -7,6 +7,8 @@ connectionInfo = {
   port: 8888
 }
 
+serviceName = "myService"
+
 client = {
   ack: false
   connection: { }
@@ -36,7 +38,7 @@ socket.on "listening", () ->
     return console.log("Cannot obtain connection information #{err.message}") if err?
     send(connectionInfo, {
       type: "register"
-      name: "client"
+      name: serviceName
       privateInfo: {
         port: socket.address().port
         address: ip
@@ -49,7 +51,19 @@ socket.on "message", (data, publicInfo) ->
   catch e
     return console.log("Cannot parse given data #{e}: #{data}")
 
-  if data.type is "error"
-    console.log "Received error on request[#{data.request}] status[#{data.status}]"
+  if data.status isnt 200
+    if data.request is "register" # not successful register, we want to connect to existing node
+      return send connectionInfo, {
+        type: "connect"
+        name: serviceName
+      }
+
+    return console.log "Received error on request[#{data.request}] status[#{data.status}]"
+
+  if data.type is "register"
+    console.log "Registration successful"
+
+  if data.type is "connect"
+    console.log "Connecting to #{data.private.address}:#{data.private.port}"
 
 socket.bind()
