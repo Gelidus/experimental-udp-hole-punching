@@ -14,7 +14,7 @@ listener.on "message", (data, publicInfo) ->
   catch e
     return console.log("Cannot parse given data #{e}: #{data}")
 
-  if data.type is "register"
+  if data.request is "register"
     if connections[data.name]?
       return send publicInfo, {
         request: "register"
@@ -29,11 +29,11 @@ listener.on "message", (data, publicInfo) ->
     # send registration successful
     console.log "New connection registered \"#{data.name}\""
     return send publicInfo, {
-      type: "register"
+      request: "register"
       status: 200
     }
 
-  if data.type is "connect"
+  if data.request is "connect"
     if not connections[data.name]?
       send publicInfo, {
         request: "connect"
@@ -42,14 +42,14 @@ listener.on "message", (data, publicInfo) ->
     else
       send publicInfo, {
         status: 200
-        type: "connect"
+        request: "connect"
         private: connections[data.name].private
         public: publicInfo
       }
 
       send connections[data.name].private, {
         status: 200
-        type: "connect"
+        request: "connect"
         private: data.private
         public: connections[data.name].public
       }

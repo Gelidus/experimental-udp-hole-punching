@@ -37,7 +37,7 @@ socket.on "listening", () ->
   getNetworkIP (err, ip) ->
     return console.log("Cannot obtain connection information #{err.message}") if err?
     send(connectionInfo, {
-      type: "register"
+      request: "register"
       status: 200
       name: serviceName
       private: {
@@ -56,7 +56,7 @@ socket.on "message", (data, publicInfo) ->
     if data.request is "register" # not successful register, we want to connect to existing node
       getNetworkIP (err, ip) ->
         return send connectionInfo, {
-          type: "connect"
+          request: "connect"
           status: 200
           name: serviceName
           private: {
@@ -67,18 +67,18 @@ socket.on "message", (data, publicInfo) ->
 
     return console.log "Received error on request[#{data.request}] status[#{data.status}]"
 
-  if data.type is "register"
+  if data.request is "register"
     console.log "Registration successful"
 
-  if data.type is "connect"
+  if data.request is "connect"
     console.log "Connecting to #{data.private.address}:#{data.private.port}"
 
     send data.private, {
-      type: "ack"
+      request: "ack"
       status: 200
     }
 
-  if data.type is "ack"
+  if data.request is "ack"
     console.log "Got ack from #{publicInfo.address}:#{publicInfo.port}"
 
 socket.bind()
