@@ -23,7 +23,7 @@ listener.on "message", (data, publicInfo) ->
 
     connections[data.name] = {
       public: publicInfo
-      private: data.privateInfo
+      private: data.private
     }
 
     # send registration successful
@@ -44,12 +44,14 @@ listener.on "message", (data, publicInfo) ->
         status: 200
         type: "connect"
         private: connections[data.name].private
+        public: publicInfo
       }
 
       send connections[data.name].private, {
         status: 200
         type: "connect"
-        private: publicInfo
+        private: data.private
+        public: connections[data.name].public
       }
 
 send = (connection, message, callback) ->
