@@ -43,15 +43,19 @@ listener.on "message", (data, publicInfo) ->
       send publicInfo, {
         status: 200
         request: "connect"
-        private: connections[data.name].private
-        public: publicInfo
+        hosts: [{
+          private: connections[data.name].private
+          public: publicInfo
+        }]
       }
 
       send connections[data.name].private, {
         status: 200
         request: "connect"
-        private: data.private
-        public: connections[data.name].public
+        hosts: [{
+          private: data.private
+          public: connections[data.name].public
+        }]
       }
 
 send = (connection, message, callback) ->

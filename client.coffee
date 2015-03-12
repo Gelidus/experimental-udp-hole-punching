@@ -36,6 +36,7 @@ send = (connection, message, callback) ->
 socket.on "listening", () ->
   getNetworkIP (err, ip) ->
     return console.log("Cannot obtain connection information #{err.message}") if err?
+    console.log "Obtained address of this service #{ip}:#{socket.address().port}"
     send(connectionInfo, {
       request: "register"
       status: 200
@@ -71,12 +72,13 @@ socket.on "message", (data, publicInfo) ->
     console.log "Registration successful"
 
   if data.request is "connect"
-    console.log "Connecting to #{data.private.address}:#{data.private.port}"
+    for host in data.hosts
+      console.log "Connecting to #{host.private.address}:#{host.private.port}"
 
-    send data.private, {
-      request: "ack"
-      status: 200
-    }
+      send host.private, {
+        request: "ack"
+        status: 200
+      }
 
   if data.request is "ack"
     console.log "Got ack from #{publicInfo.address}:#{publicInfo.port}"
