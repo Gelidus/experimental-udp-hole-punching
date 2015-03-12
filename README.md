@@ -10,3 +10,5 @@ coffee server.coffee -n # run server
 coffee client.coffee -n # run first client ("host")
 coffee client.coffee -n # run second client
 ```
+
+You need to have apache listening on port 80
